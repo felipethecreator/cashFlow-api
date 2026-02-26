@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: eventhub-postgres
+    environment:
+      POSTGRES_DB: eventhub
+      POSTGRES_USER: eventhub
+      POSTGRES_PASSWORD: eventhub123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - eventhub-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: eventhub-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: eventhub
+      RABBITMQ_DEFAULT_PASS: eventhub123
+    ports:
+      - "5672:5672"   # AMQP protocol
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - eventhub-network
+
+  # Mailhog (fake SMTP para testes de email)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: eventhub-mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - eventhub-network
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+networks:
+  eventhub-network:
+    driver: bridge
