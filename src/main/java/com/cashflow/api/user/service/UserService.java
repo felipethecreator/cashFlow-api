@@ -9,9 +9,12 @@ import com.cashflow.api.user.dto.output.AuthResponse;
 import com.cashflow.api.user.dto.output.UserResponse;
 import com.cashflow.api.user.entity.User;
 import com.cashflow.api.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -26,6 +29,7 @@ public class UserService {
         this.jwtService = jwtService;
     }
 
+    @Transactional
     public UserResponse createUser(RegisterRequest request) throws UnauthorizedException {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new UnauthorizedException("O email informado já está cadastrado.");
@@ -33,7 +37,9 @@ public class UserService {
 
         User user = userMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(request.getEmail().toLowerCase().trim());
         User saved = userRepository.save(user);
+        log.info("Registrando novo usuário: {}", request.getEmail());
         return userMapper.toDto(saved);
     }
 

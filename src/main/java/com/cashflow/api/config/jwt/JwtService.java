@@ -26,7 +26,6 @@ public class JwtService {
 
         return JWT.create()
                 .withSubject(user.getEmail())
-                .withClaim("role", user.getRole().name())
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
                 .sign(algorithm());

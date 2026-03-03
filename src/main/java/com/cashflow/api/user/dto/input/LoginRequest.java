@@ -1,5 +1,6 @@
 package com.cashflow.api.user.dto.input;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "Email é obrigatório")
+    @Email(message = "Email inválido")
     private String email;
-    @NotBlank
+    @NotBlank(message = "Senha é obrigatória")
     private String password;
 }
