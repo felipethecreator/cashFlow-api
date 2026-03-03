@@ -1,9 +1,8 @@
-package com.eventhub.eventhub_api.user.dto.mapper;
+package com.cashflow.api.user.dto.mapper;
 
-import com.eventhub.eventhub_api.user.dto.input.RegisterRequest;
-import com.eventhub.eventhub_api.user.dto.output.UserResponse;
-import com.eventhub.eventhub_api.user.entity.User;
-import lombok.RequiredArgsConstructor;
+import com.cashflow.api.user.dto.input.RegisterRequest;
+import com.cashflow.api.user.dto.output.UserResponse;
+import com.cashflow.api.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

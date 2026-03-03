@@ -1,6 +1,6 @@
-package com.eventhub.eventhub_api.user.dto.output;
+package com.cashflow.api.user.dto.output;
 
-import com.eventhub.eventhub_api.user.entity.UserRole;
+import com.cashflow.api.user.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

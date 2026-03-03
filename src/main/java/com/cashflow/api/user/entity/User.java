@@ -1,7 +1,6 @@
-package com.eventhub.eventhub_api.user.entity;
+package com.cashflow.api.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
