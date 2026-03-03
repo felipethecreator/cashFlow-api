@@ -8,11 +8,11 @@
 		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.eventhub</groupId>
-	<artifactId>eventhub-api</artifactId>
+	<groupId>com.cashflow</groupId>
+	<artifactId>cashflow-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>eventhub-api</name>
-	<description>Sistema de Gestão de Eventos com processamento assíncrono</description>
+	<name>cashflow-api</name>
+	<description>Sistema de Controle Financeiro Pessoal com notificações inteligentes</description>
 	<url/>
 	<licenses>
 		<license/>

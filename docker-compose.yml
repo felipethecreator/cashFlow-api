@@ -4,47 +4,47 @@ services:
   # PostgreSQL
   postgres:
     image: postgres:16-alpine
-    container_name: eventhub-postgres
+    container_name: cashflow-postgres
     environment:
-      POSTGRES_DB: eventhub
-      POSTGRES_USER: eventhub
-      POSTGRES_PASSWORD: eventhub123
+      POSTGRES_DB: cashflow
+      POSTGRES_USER: cashflow
+      POSTGRES_PASSWORD: cashflow123
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - eventhub-network
+      - cashflow-network
 
   # RabbitMQ
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
-    container_name: eventhub-rabbitmq
+    container_name: cashflow-rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: eventhub
-      RABBITMQ_DEFAULT_PASS: eventhub123
+      RABBITMQ_DEFAULT_USER: cashflow
+      RABBITMQ_DEFAULT_PASS: cashflow123
     ports:
-      - "5672:5672"   # AMQP protocol
-      - "15672:15672" # Management UI
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - eventhub-network
+      - cashflow-network
 
-  # Mailhog (fake SMTP para testes de email)
+  # Mailhog (fake SMTP para dev)
   mailhog:
     image: mailhog/mailhog:latest
-    container_name: eventhub-mailhog
+    container_name: cashflow-mailhog
     ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI
+      - "1025:1025"
+      - "8025:8025"
     networks:
-      - eventhub-network
+      - cashflow-network
 
 volumes:
   postgres_data:
   rabbitmq_data:
 
 networks:
-  eventhub-network:
+  cashflow-network:
     driver: bridge
