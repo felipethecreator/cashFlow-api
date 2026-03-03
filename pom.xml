@@ -12,7 +12,7 @@
 	<artifactId>cashflow-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cashflow-api</name>
-	<description>Sistema de Controle Financeiro Pessoal com notificações inteligentes</description>
+		<description>Sistema de Controle Financeiro Pessoal com notificações inteligentes</description>
 	<url/>
 	<licenses>
 		<license/>

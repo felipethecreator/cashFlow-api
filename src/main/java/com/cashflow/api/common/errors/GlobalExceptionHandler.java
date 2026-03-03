@@ -1,6 +1,6 @@
-package com.cashflow.api.shared.errors;
+package com.cashflow.api.common.errors;
 
-import com.cashflow.api.shared.exceptions.*;
+import com.cashflow.api.common.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

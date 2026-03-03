@@ -1,4 +1,4 @@
-package com.cashflow.api.shared.errors;
+package com.cashflow.api.common.errors;
 
 import java.time.Instant;
 import java.util.List;

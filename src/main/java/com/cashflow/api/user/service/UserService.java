@@ -1,7 +1,7 @@
 package com.cashflow.api.user.service;
 
 import com.cashflow.api.config.jwt.JwtService;
-import com.cashflow.api.shared.exceptions.UnauthorizedException;
+import com.cashflow.api.common.exceptions.UnauthorizedException;
 import com.cashflow.api.user.dto.input.LoginRequest;
 import com.cashflow.api.user.dto.input.RegisterRequest;
 import com.cashflow.api.user.dto.mapper.UserMapper;

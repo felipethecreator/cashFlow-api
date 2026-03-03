@@ -1,4 +1,4 @@
-package com.cashflow.api.shared.exceptions;
+package com.cashflow.api.common.exceptions;
 
 public class ConflictException extends RuntimeException {
     public ConflictException(String message) {
