@@ -1,6 +1,5 @@
 package com.cashflow.api.user.dto.output;
 
-import com.cashflow.api.user.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -8,7 +8,6 @@ import com.cashflow.api.user.dto.mapper.UserMapper;
 import com.cashflow.api.user.dto.output.AuthResponse;
 import com.cashflow.api.user.dto.output.UserResponse;
 import com.cashflow.api.user.entity.User;
-import com.cashflow.api.user.entity.UserRole;
 import com.cashflow.api.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,6 @@ public class UserService {
 
         User user = userMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setRole(UserRole.PARTICIPANT);
         User saved = userRepository.save(user);
         return userMapper.toDto(saved);
     }
