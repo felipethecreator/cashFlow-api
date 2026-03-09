@@ -40,7 +40,14 @@ public class CategoryService {
         return categoryMapper.toDto(saved);
     }
 
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getUserCategories(UUID userId) {
+        return categoryRepository.findByUserId(userId).stream()
+                .map(category -> new CategoryResponse(
+                        category.getId(),
+                        category.getName(),
+                        category.getIcon(),
+                        category.getColor()
+                ))
+                .toList();
     }
 }

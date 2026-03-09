@@ -20,4 +20,7 @@ public class CategoryResponse {
     private String icon;
     private String color;
     private LocalDateTime createdAt;
+
+    public CategoryResponse(UUID id, String name, String icon, String color) {
+    }
 }
