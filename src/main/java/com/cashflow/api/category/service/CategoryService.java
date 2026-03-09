@@ -7,6 +7,8 @@ import com.cashflow.api.category.entity.Category;
 import com.cashflow.api.category.repository.CategoryRepository;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
 import com.cashflow.api.user.entity.User;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ public class CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
+    @Transactional
     public CategoryResponse createCategory(UUID userId, CreateCategory data) {
         if (categoryRepository.existsByUserIdAndName(userId, data.getName())) {
             throw new UnauthorizedException("A categoria informada já existe.");
@@ -40,6 +43,7 @@ public class CategoryService {
         return categoryMapper.toDto(saved);
     }
 
+    @Transactional
     public List<CategoryResponse> getUserCategories(UUID userId) {
         return categoryRepository.findByUserId(userId).stream()
                 .map(category -> new CategoryResponse(
