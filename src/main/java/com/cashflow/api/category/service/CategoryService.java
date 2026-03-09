@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,5 +48,28 @@ public class CategoryService {
         return categoryRepository.findByUserId(userId).stream()
                 .map(categoryMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public void createDefaultCategories(UUID userId) {
+        List<Category> defaultCategories = Arrays.asList(
+                buildCategory(userId, "Moradia", "home", "#FF5733"),
+                buildCategory(userId, "Alimentação", "utensils", "#33FF57"),
+                buildCategory(userId, "Transporte", "car", "#3357FF"),
+                buildCategory(userId, "Lazer", "gamepad", "#FF33F5"),
+                buildCategory(userId, "Saúde", "heartbeat", "#33FFF5"),
+                buildCategory(userId, "Educação", "book", "#F5FF33")
+        );
+
+        categoryRepository.saveAll(defaultCategories);
+    }
+
+    private Category buildCategory(UUID userId, String name, String icon, String color) {
+        return Category.builder()
+                .user(User.builder().id(userId).build())
+                .name(name)
+                .icon(icon)
+                .color(color)
+                .build();
     }
 }

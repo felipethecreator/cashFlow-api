@@ -1,5 +1,6 @@
 package com.cashflow.api.user.service;
 
+import com.cashflow.api.category.service.CategoryService;
 import com.cashflow.api.config.jwt.JwtService;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
 import com.cashflow.api.user.dto.input.LoginRequest;
@@ -21,12 +22,14 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final CategoryService categoryService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, JwtService jwtService, CategoryService categoryService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.categoryService = categoryService;
     }
 
     @Transactional
@@ -40,6 +43,7 @@ public class UserService {
         user.setEmail(request.getEmail().toLowerCase().trim());
         User saved = userRepository.save(user);
         log.info("Registrando novo usuário: {}", request.getEmail());
+        categoryService.createDefaultCategories(saved.getId());
         return userMapper.toDto(saved);
     }
 
