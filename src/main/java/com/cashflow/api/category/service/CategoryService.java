@@ -10,6 +10,7 @@ import com.cashflow.api.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -37,5 +38,9 @@ public class CategoryService {
         Category saved = categoryRepository.save(category);
         log.info("Registrando nova categoria: {}", data.getName());
         return categoryMapper.toDto(saved);
+    }
+
+    public List<Category> getAll() {
+        return categoryRepository.findAll();
     }
 }
