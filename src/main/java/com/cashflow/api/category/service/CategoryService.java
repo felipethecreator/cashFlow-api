@@ -8,7 +8,6 @@ import com.cashflow.api.category.repository.CategoryRepository;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
 import com.cashflow.api.user.entity.User;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -43,15 +42,10 @@ public class CategoryService {
         return categoryMapper.toDto(saved);
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<CategoryResponse> getUserCategories(UUID userId) {
         return categoryRepository.findByUserId(userId).stream()
-                .map(category -> new CategoryResponse(
-                        category.getId(),
-                        category.getName(),
-                        category.getIcon(),
-                        category.getColor()
-                ))
+                .map(categoryMapper::toDto)
                 .toList();
     }
 }
