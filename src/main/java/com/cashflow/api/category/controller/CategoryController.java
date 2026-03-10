@@ -6,7 +6,11 @@ import com.cashflow.api.category.entity.Category;
 import com.cashflow.api.category.service.CategoryService;
 import com.cashflow.api.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/categories")
 @Tag(name = "Categories", description = "Gerenciamento de categorias de despesas")
+@SecurityRequirement(name = "bearer-jwt")
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -28,7 +33,23 @@ public class CategoryController {
 
     @PostMapping(value = "/create")
     @Operation(summary = "Criar categoria", description = "Cria uma nova categoria personalizada")
-    @ApiResponse(responseCode = "409", description = "Categoria já existe")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Categoria criada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CategoryResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos"
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Categoria já existe"
+            )})
     public ResponseEntity<CategoryResponse> create(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody CreateCategory request
@@ -38,7 +59,19 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Listar minhas categorias", description = "Retorna todas as categorias do usuário autenticado")
-    @ApiResponse(responseCode = "200", description = "Categorias listadas com sucesso")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Categorias listadas com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CategoryResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Não autenticado"
+            )})
     public ResponseEntity<List<CategoryResponse>> getMyCategories(
             @AuthenticationPrincipal User user
     ) {
