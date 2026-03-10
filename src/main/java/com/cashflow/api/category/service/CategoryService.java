@@ -1,10 +1,13 @@
 package com.cashflow.api.category.service;
 
 import com.cashflow.api.category.dto.input.CreateCategory;
+import com.cashflow.api.category.dto.input.UpdateCategory;
 import com.cashflow.api.category.dto.mapper.CategoryMapper;
 import com.cashflow.api.category.dto.output.CategoryResponse;
 import com.cashflow.api.category.entity.Category;
 import com.cashflow.api.category.repository.CategoryRepository;
+import com.cashflow.api.common.exceptions.ConflictException;
+import com.cashflow.api.common.exceptions.NotFoundException;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
 import com.cashflow.api.user.entity.User;
 import jakarta.transaction.Transactional;
@@ -62,6 +65,35 @@ public class CategoryService {
         );
 
         categoryRepository.saveAll(defaultCategories);
+    }
+
+    @Transactional
+    public CategoryResponse updateCategory(UUID userId, UUID categoryId, UpdateCategory request) {
+        Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
+        if (!category.getName().equals(request.name()) &&
+                categoryRepository.existsByUserIdAndName(userId, request.name())) {
+            throw new ConflictException("Já existe uma categoria com o nome '" + request.name() + "'");
+        }
+
+        category.setName(request.name());
+        category.setIcon(request.icon());
+        category.setColor(request.color());
+
+        Category updated = categoryRepository.save(category);
+
+        log.info("Categoria '{}' atualizada - userId: {}", updated.getName(), userId);
+
+        return categoryMapper.toDto(updated);
+    }
+
+    @Transactional
+    public void deleteCategory(UUID userId, UUID categoryId) {
+        Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
+        categoryRepository.delete(category);
     }
 
     private Category buildCategory(UUID userId, String name, String icon, String color) {

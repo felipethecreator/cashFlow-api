@@ -1,6 +1,7 @@
 package com.cashflow.api.category.controller;
 
 import com.cashflow.api.category.dto.input.CreateCategory;
+import com.cashflow.api.category.dto.input.UpdateCategory;
 import com.cashflow.api.category.dto.output.CategoryResponse;
 import com.cashflow.api.category.entity.Category;
 import com.cashflow.api.category.service.CategoryService;
@@ -19,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -77,4 +79,34 @@ public class CategoryController {
     ) {
         return ResponseEntity.ok(categoryService.getUserCategories(user.getId()));
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar categoria")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Categoria atualizada"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada"),
+            @ApiResponse(responseCode = "409", description = "Nome já existe")
+    })
+    public ResponseEntity<CategoryResponse> updateCategory(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateCategory request
+    ) {
+        return ResponseEntity.ok(categoryService.updateCategory(user.getId(), id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar categoria")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Categoria deletada"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
+    public ResponseEntity<Void> deleteCategory(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id
+    ) {
+        categoryService.deleteCategory(user.getId(), id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
