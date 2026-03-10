@@ -10,6 +10,7 @@ import com.cashflow.api.common.exceptions.BadRequestException;
 import com.cashflow.api.common.exceptions.ConflictException;
 import com.cashflow.api.common.exceptions.NotFoundException;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
+import com.cashflow.api.expense.repository.ExpenseRepository;
 import com.cashflow.api.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +25,12 @@ import java.util.UUID;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ExpenseRepository expenseRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper, ExpenseRepository expenseRepository) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
+        this.expenseRepository = expenseRepository;
     }
 
     @Transactional
@@ -99,6 +102,13 @@ public class CategoryService {
     public void deleteCategory(UUID userId, UUID categoryId) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
+        long expensesCount = expenseRepository.countByCategoryId(categoryId);
+        if (expensesCount > 0) {
+            throw new BadRequestException(
+                    "Não é possível deletar categoria com " + expensesCount + " despesa(s) vinculada(s)"
+            );
+        }
 
         categoryRepository.delete(category);
     }
