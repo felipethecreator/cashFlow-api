@@ -6,6 +6,7 @@ import com.cashflow.api.category.dto.mapper.CategoryMapper;
 import com.cashflow.api.category.dto.output.CategoryResponse;
 import com.cashflow.api.category.entity.Category;
 import com.cashflow.api.category.repository.CategoryRepository;
+import com.cashflow.api.common.exceptions.BadRequestException;
 import com.cashflow.api.common.exceptions.ConflictException;
 import com.cashflow.api.common.exceptions.NotFoundException;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
@@ -33,6 +34,12 @@ public class CategoryService {
     public CategoryResponse createCategory(UUID userId, CreateCategory data) {
         if (categoryRepository.existsByUserIdAndName(userId, data.getName())) {
             throw new UnauthorizedException("A categoria informada já existe.");
+        }
+
+        long count = categoryRepository.countByUserId(userId);
+
+        if (count >= 20) {
+            throw new BadRequestException("Você atingiu o limite de 20 categorias. Exclua alguma antes de criar outra.");
         }
 
         Category category = categoryMapper.toEntity(data);
