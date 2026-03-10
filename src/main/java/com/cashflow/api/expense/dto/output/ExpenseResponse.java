@@ -16,6 +16,7 @@ public record ExpenseResponse(
         ExpensePriority priority,
         Boolean isActive,
         Boolean isRecurring,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 }
