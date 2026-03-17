@@ -2,6 +2,8 @@ package com.cashflow.api.common.errors;
 
 import com.cashflow.api.common.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,6 +15,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -50,20 +53,34 @@ public class GlobalExceptionHandler {
                 .body(build(HttpStatus.CONFLICT, ex.getMessage(), req.getRequestURI(), List.of()));
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorDto> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest req) {
+        log.warn("Conflito de integridade no banco em {}: {}", req.getRequestURI(), ex.getMostSpecificCause().getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(build(HttpStatus.CONFLICT, "Conflito de dados: registro já existe ou é inválido.", req.getRequestURI(), List.of()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorDto> handleGeneric(Exception ex, HttpServletRequest req) {
+        String traceId = UUID.randomUUID().toString();
+        log.error("Erro interno traceId={} path={}", traceId, req.getRequestURI(), ex);
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(build(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno", req.getRequestURI(), List.of()));
+                .body(build(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno", req.getRequestURI(), List.of(), traceId));
     }
 
     private ApiErrorDto build(HttpStatus status, String message, String path, List<ApiErrorDto.FieldError> fields) {
+        return build(status, message, path, fields, UUID.randomUUID().toString());
+    }
+
+    private ApiErrorDto build(HttpStatus status, String message, String path, List<ApiErrorDto.FieldError> fields, String traceId) {
         return new ApiErrorDto(
                 Instant.now(),
                 status.value(),
                 status.getReasonPhrase(),
                 message,
                 path,
-                UUID.randomUUID().toString(),
+                traceId,
                 fields == null || fields.isEmpty() ? null : fields
         );
     }
