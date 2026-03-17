@@ -34,23 +34,33 @@ public class UserService {
 
     @Transactional
     public UserResponse createUser(RegisterRequest request) throws UnauthorizedException {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String normalizedEmail = request.getEmail().toLowerCase().trim();
+
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new UnauthorizedException("O email informado já está cadastrado.");
         }
 
         User user = userMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail().toLowerCase().trim());
+        user.setEmail(normalizedEmail);
+
         User saved = userRepository.save(user);
-        log.info("Registrando novo usuário: {}", request.getEmail());
-        categoryService.createDefaultCategories(saved.getId());
+        log.info("Registrando novo usuário: {}", normalizedEmail);
+
+        try {
+            categoryService.createDefaultCategories(saved.getId());
+        } catch (Exception ex) {
+            log.error("Usuário criado, mas falha ao criar categorias padrão. userId={}", saved.getId(), ex);
+        }
+
         return userMapper.toDto(saved);
     }
 
     public AuthResponse login(LoginRequest request) throws UnauthorizedException {
-        String email = request.getEmail();
-        User user = userRepository.findByEmail(email).
-                orElseThrow(() -> new UnauthorizedException("Email ou senha inválidos"));
+        String email = request.getEmail().toLowerCase().trim();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UnauthorizedException("Email ou senha inválidos"));
 
         boolean ok = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
 
