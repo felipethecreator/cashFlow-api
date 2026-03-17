@@ -37,7 +37,9 @@ public class SecurityConfig {
                                 "/api-docs/**",
                                 "/v3/api-docs/**")
                         .permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**",
+                                        "/auth/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
