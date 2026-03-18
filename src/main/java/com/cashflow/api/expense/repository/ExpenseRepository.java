@@ -14,6 +14,10 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
     List<Expense> findByUserId(UUID userId);
 
+    List<Expense> findByUserIdAndIsActiveTrueAndIsRecurringTrue(UUID userId);
+
+    List<Expense> findByIsActiveTrueAndIsRecurringTrue();
+
     Optional<Expense> findByIdAndUserId(UUID id, UUID userId);
 
     long countByUserId(UUID userId);
