@@ -1,48 +1,44 @@
 package com.cashflow.api.config;
 
-import com.cashflow.api.config.jwt.JwtAuthFilter;
-import com.cashflow.api.config.jwt.JwtService;
 import com.cashflow.api.user.controller.UserController;
 import com.cashflow.api.user.dto.output.UserResponse;
-import com.cashflow.api.user.repository.UserRepository;
 import com.cashflow.api.user.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.filter.CorsFilter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-@WebMvcTest(UserController.class)
-@Import({SecurityConfig.class, CorsConfig.class, JwtAuthFilter.class})
 class AuthCorsIntegrationTest {
 
     private static final String FRONTEND_ORIGIN = "https://cashflow-finance.vercel.app";
 
-    @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
     private UserService userService;
 
-    @MockBean
-    private JwtService jwtService;
+    @BeforeEach
+    void setUp() {
+        userService = mock(UserService.class);
 
-    @MockBean
-    private UserRepository userRepository;
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(new UserController(userService))
+                .addFilters(new CorsFilter(new CorsConfig().corsConfigurationSource()))
+                .build();
+    }
 
     @Test
     void shouldAnswerPreflightForLegacyAuthPath() throws Exception {
