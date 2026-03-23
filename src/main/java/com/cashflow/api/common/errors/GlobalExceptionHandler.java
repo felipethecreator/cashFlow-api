@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -45,6 +46,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorDto> handleNotFound(NotFoundException ex, HttpServletRequest req) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(build(HttpStatus.NOT_FOUND, ex.getMessage(), req.getRequestURI(), List.of()));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiErrorDto> handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(build(HttpStatus.NOT_FOUND, "Recurso não encontrado.", req.getRequestURI(), List.of()));
     }
 
     @ExceptionHandler(ConflictException.class)

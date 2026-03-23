@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping({"/api/expenses", "/expenses"})
 @RequiredArgsConstructor
 @Tag(
         name = "Expenses",

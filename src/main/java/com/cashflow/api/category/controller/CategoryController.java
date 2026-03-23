@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping({"/api/categories", "/categories"})
 @Tag(name = "Categories", description = "Gerenciamento de categorias de despesas")
 @SecurityRequirement(name = "bearer-jwt")
 public class CategoryController {
