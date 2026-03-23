@@ -47,11 +47,7 @@ public class UserService {
         User saved = userRepository.save(user);
         log.info("Registrando novo usuário: {}", normalizedEmail);
 
-        try {
-            categoryService.createDefaultCategories(saved.getId());
-        } catch (Exception ex) {
-            log.error("Usuário criado, mas falha ao criar categorias padrão. userId={}", saved.getId(), ex);
-        }
+        categoryService.createDefaultCategories(saved.getId());
 
         return userMapper.toDto(saved);
     }
@@ -73,3 +69,4 @@ public class UserService {
         return new AuthResponse(token, userResponse);
     }
 }
+
