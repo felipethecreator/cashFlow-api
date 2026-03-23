@@ -15,10 +15,10 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(
+        config.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "https://cashflow-finance.vercel.app",
-                "https://*.vercel.app"
+                "http://127.0.0.1:3000",
+                "https://cashflow-finance.vercel.app"
         ));
 
         config.setAllowedMethods(List.of(
