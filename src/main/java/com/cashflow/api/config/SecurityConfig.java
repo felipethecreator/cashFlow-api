@@ -9,23 +9,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final CorsConfig corsConfig;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, CorsConfig cors, CorsConfig corsConfig) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, CorsConfig corsConfig) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.corsConfig = corsConfig;
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -35,15 +34,13 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/api-docs",
                                 "/api-docs/**",
-                                "/v3/api-docs/**")
-                        .permitAll()
-                        .requestMatchers("/api/auth/**",
-                                        "/auth/**")
-                        .permitAll()
+                                "/v3/api-docs/**"
+                        ).permitAll()
+                        .requestMatchers("/api/auth/**", "/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
