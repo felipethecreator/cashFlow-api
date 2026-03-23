@@ -3,7 +3,7 @@ package com.cashflow.api.category.controller;
 import com.cashflow.api.category.dto.input.CreateCategory;
 import com.cashflow.api.category.dto.input.UpdateCategory;
 import com.cashflow.api.category.dto.output.CategoryResponse;
-import com.cashflow.api.category.entity.Category;
+import com.cashflow.api.common.security.AuthenticatedUser;
 import com.cashflow.api.category.service.CategoryService;
 import com.cashflow.api.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,9 +53,10 @@ public class CategoryController {
                     description = "Categoria já existe"
             )})
     public ResponseEntity<CategoryResponse> create(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @Valid @RequestBody CreateCategory request
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(user.getId(), request));
     }
 
@@ -75,8 +76,9 @@ public class CategoryController {
                     description = "Não autenticado"
             )})
     public ResponseEntity<List<CategoryResponse>> getMyCategories(
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.ok(categoryService.getUserCategories(user.getId()));
     }
 
@@ -88,10 +90,11 @@ public class CategoryController {
             @ApiResponse(responseCode = "409", description = "Nome já existe")
     })
     public ResponseEntity<CategoryResponse> updateCategory(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PathVariable UUID id,
             @Valid @RequestBody UpdateCategory request
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.ok(categoryService.updateCategory(user.getId(), id, request));
     }
 
@@ -102,9 +105,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
     })
     public ResponseEntity<Void> deleteCategory(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PathVariable UUID id
     ) {
+        User user = AuthenticatedUser.require(authentication);
         categoryService.deleteCategory(user.getId(), id);
         return ResponseEntity.noContent().build();
     }

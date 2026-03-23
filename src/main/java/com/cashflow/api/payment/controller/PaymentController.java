@@ -1,6 +1,7 @@
 package com.cashflow.api.payment.controller;
 
 import com.cashflow.api.common.exceptions.BadRequestException;
+import com.cashflow.api.common.security.AuthenticatedUser;
 import com.cashflow.api.payment.dto.input.CreatePaymentRequest;
 import com.cashflow.api.payment.dto.input.MarkAsPaidRequest;
 import com.cashflow.api.payment.dto.output.PaymentResponse;
@@ -10,7 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -28,36 +29,40 @@ public class PaymentController {
 
     @GetMapping
     public ResponseEntity<List<PaymentResponse>> getPaymentsByMonth(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @RequestParam(required = false) String month
     ) {
+        User user = AuthenticatedUser.require(authentication);
         LocalDate parsedMonth = parseMonth(month);
         return ResponseEntity.ok(paymentService.getUserPaymentsByMonth(user.getId(), parsedMonth));
     }
 
     @PostMapping
     public ResponseEntity<PaymentResponse> createPayment(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @Valid @RequestBody CreatePaymentRequest request
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(paymentService.createManualPayment(user.getId(), request));
     }
 
     @PatchMapping("/{id}/pay")
     public ResponseEntity<PaymentResponse> markAsPaid(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PathVariable UUID id,
             @RequestBody(required = false) MarkAsPaidRequest request
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.ok(paymentService.markAsPaid(user.getId(), id, request));
     }
 
     @PatchMapping("/{id}/pending")
     public ResponseEntity<PaymentResponse> markAsPending(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PathVariable UUID id
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.ok(paymentService.markAsPending(user.getId(), id));
     }
 

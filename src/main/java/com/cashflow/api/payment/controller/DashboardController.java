@@ -1,12 +1,13 @@
 package com.cashflow.api.payment.controller;
 
 import com.cashflow.api.common.exceptions.BadRequestException;
+import com.cashflow.api.common.security.AuthenticatedUser;
 import com.cashflow.api.payment.dto.output.DashboardResponse;
 import com.cashflow.api.payment.service.DashboardService;
 import com.cashflow.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,9 +26,10 @@ public class DashboardController {
 
     @GetMapping("/summary")
     public ResponseEntity<DashboardResponse> getSummary(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @RequestParam(required = false) String month
     ) {
+        User user = AuthenticatedUser.require(authentication);
         LocalDate parsedMonth = parseMonth(month);
         return ResponseEntity.ok(dashboardService.getMonthlySummary(user.getId(), parsedMonth));
     }

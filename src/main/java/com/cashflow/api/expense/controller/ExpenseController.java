@@ -4,6 +4,7 @@ import com.cashflow.api.expense.dto.input.CreateExpense;
 import com.cashflow.api.expense.dto.input.UpdateExpense;
 import com.cashflow.api.expense.dto.output.ExpenseResponse;
 import com.cashflow.api.expense.service.ExpenseService;
+import com.cashflow.api.common.security.AuthenticatedUser;
 import com.cashflow.api.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,7 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,8 +59,9 @@ public class ExpenseController {
             )
     })
     public ResponseEntity<List<ExpenseResponse>> getMyExpenses(
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.ok(expenseService.getUserExpenses(user.getId()));
     }
 
@@ -102,9 +104,10 @@ public class ExpenseController {
             )
     })
     public ResponseEntity<ExpenseResponse> createExpense(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @Valid @RequestBody CreateExpense request
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(expenseService.createExpense(user.getId(), request));
@@ -149,10 +152,11 @@ public class ExpenseController {
             )
     })
     public ResponseEntity<ExpenseResponse> updateExpense(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PathVariable UUID id,
             @Valid @RequestBody UpdateExpense request
     ) {
+        User user = AuthenticatedUser.require(authentication);
         return ResponseEntity.ok(expenseService.updateExpense(user.getId(), id, request));
     }
 
@@ -184,9 +188,10 @@ public class ExpenseController {
             )
     })
     public ResponseEntity<Void> deleteExpense(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PathVariable UUID id
     ) {
+        User user = AuthenticatedUser.require(authentication);
         expenseService.deleteExpense(user.getId(), id);
         return ResponseEntity.noContent().build();
     }
