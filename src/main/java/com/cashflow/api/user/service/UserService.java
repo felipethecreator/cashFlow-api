@@ -1,6 +1,7 @@
 package com.cashflow.api.user.service;
 
 import com.cashflow.api.category.service.CategoryService;
+import com.cashflow.api.common.exceptions.ConflictException;
 import com.cashflow.api.config.jwt.JwtService;
 import com.cashflow.api.common.exceptions.UnauthorizedException;
 import com.cashflow.api.user.dto.input.LoginRequest;
@@ -37,14 +38,14 @@ public class UserService {
         String normalizedEmail = request.getEmail().toLowerCase().trim();
 
         if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new UnauthorizedException("O email informado já está cadastrado.");
+            throw new ConflictException("O email informado já está cadastrado.");
         }
 
         User user = userMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setEmail(normalizedEmail);
 
-        User saved = userRepository.save(user);
+        User saved = userRepository.saveAndFlush(user);
         log.info("Registrando novo usuário: {}", normalizedEmail);
 
         categoryService.createDefaultCategories(saved.getId());

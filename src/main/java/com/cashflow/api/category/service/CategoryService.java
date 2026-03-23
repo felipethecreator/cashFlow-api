@@ -63,9 +63,7 @@ public class CategoryService {
                 .toList();
     }
 
-    @org.springframework.transaction.annotation.Transactional(
-            propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW
-    )
+    @Transactional
     public void createDefaultCategories(UUID userId) {
         List<Category> defaultCategories = Arrays.asList(
                 buildCategory(userId, "Moradia", "home", "#FF5733"),
