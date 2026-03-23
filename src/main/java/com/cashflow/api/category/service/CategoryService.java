@@ -66,12 +66,12 @@ public class CategoryService {
     @Transactional
     public void createDefaultCategories(UUID userId) {
         List<Category> defaultCategories = Arrays.asList(
-                buildCategory(userId, "Moradia", "home", "#FF5733"),
-                buildCategory(userId, "Alimentação", "utensils", "#33FF57"),
-                buildCategory(userId, "Transporte", "car", "#3357FF"),
-                buildCategory(userId, "Lazer", "gamepad", "#FF33F5"),
+                buildCategory(userId, "Moradia", "Home", "#FF5733"),
+                buildCategory(userId, "Alimentação", "UtensilsCrossed", "#33FF57"),
+                buildCategory(userId, "Transporte", "Car", "#3357FF"),
+                buildCategory(userId, "Lazer", "Gamepad2", "#FF33F5"),
                 buildCategory(userId, "Saúde", "heartbeat", "#33FFF5"),
-                buildCategory(userId, "Educação", "book", "#F5FF33")
+                buildCategory(userId, "Educação", "GraduationCap", "#F5FF33")
         );
 
         categoryRepository.saveAll(defaultCategories);
